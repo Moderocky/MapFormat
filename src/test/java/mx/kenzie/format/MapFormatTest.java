@@ -62,6 +62,16 @@ public class MapFormatTest {
         assert this.equals(format.format("{he\\}llo} there", Map.of("he}llo", "hello")), "hello there");
     }
 
+    @Test
+    public void sameCharacter() {
+        final MapFormat format = new MapFormat('%', '%');
+        assert this.equals(format.format("hello %test% there", Map.of()), "hello null there");
+        assert this.equals(format.format("hello %test% there", Map.of("test", "bean")), "hello bean there");
+        assert this.equals(format.format("hello %test% there", Map.of("test", 10)), "hello 10 there");
+        assert this.equals(format.format("%hello% there", Map.of("hello", "hello")), "hello there");
+        assert this.equals(format.format("%hel\\%lo% there", Map.of("hel%lo", "hello")), "hello there");
+    }
+
     private boolean equals(String x, String y) {
         assert Objects.equals(x, y) : x;
         return true;

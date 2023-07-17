@@ -11,7 +11,7 @@ import java.util.*;
  */
 public class MapFormat {
 
-    protected final int open, close;
+    protected final char open, close;
     protected final String empty;
 
     public MapFormat() {
@@ -56,12 +56,18 @@ public class MapFormat {
             if (close == -1) break;
             final String key = text.substring(open + 1, close);
             if (!part.isEmpty()) list.add(new Literal(part));
-            list.add(new Token(key.replace("\\{", "{").replace("\\}", "}")));
+            list.add(new Token(this.sanitise(key)));
             begin = close + 1;
         } while (begin < text.length());
         if (begin == start || list.isEmpty()) return new Part[]{new Literal(text)};
         if (begin < text.length()) list.add(new Literal(text.substring(begin)));
         return list.toArray(new Part[0]);
+    }
+
+    private String sanitise(String key) {
+        if (key.contains("\\" + open)) key = key.replace("\\" + open, String.valueOf(open));
+        if (key.contains("\\" + close)) key = key.replace("\\" + close, String.valueOf(close));
+        return key;
     }
 
     public String format(String text, Map<String, ?> inputs) {
